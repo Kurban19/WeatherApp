@@ -1,97 +1,98 @@
 package com.shkiper.whether
 
-import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
+import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Looper
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.app.ActivityCompat
-import androidx.viewpager.widget.ViewPager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.material.snackbar.Snackbar
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.shkiper.whether.adapter.ViewPagerAdapter
-import com.shkiper.whether.common.Common
-import kotlinx.android.synthetic.main.activity2_main.*
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONObject
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
-
+    val CITY: String = "dhaka,bd"
+    val API: String = "a6f096e9c7045fffc90db97209788939"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity2_main)
+        setContentView(R.layout.activity1_main)
 
-        initViews()
-
-    }
-
-    private fun initViews() {
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        Dexter.withActivity(this)
-            .withPermissions(android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION)
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    if(report!!.areAllPermissionsGranted()){
-                        buildLocationRequest()
-                        buildLocationCallback()
-
-                        if(ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                            return
-                        }
-
-                        fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback,
-                            Looper.myLooper())
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    Snackbar.make(root_view, "Permission Denied", Snackbar.LENGTH_LONG).show()
-                }
-            }).check()
+        weatherTask().execute()
 
     }
-    private fun buildLocationCallback(){
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult?) {
-                super.onLocationResult(p0)
-                Common.current_location = p0!!.lastLocation
 
-                setupViewPager(view_pager)
-                tabs.setupWithViewPager(view_pager)
-
-            }
+    inner class weatherTask() : AsyncTask<String, Void, String>() {
+        override fun onPreExecute() {
+            super.onPreExecute()
+            /* Showing the ProgressBar, Making the main design GONE */
+            findViewById<ProgressBar>(R.id.loader).visibility = View.VISIBLE
+            findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.GONE
+            findViewById<TextView>(R.id.errorText).visibility = View.GONE
         }
 
-    }
+        override fun doInBackground(vararg params: String?): String? {
+            var response:String?
+            try{
+                response = URL("https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API").readText(
+                    Charsets.UTF_8
+                )
+            }catch (e: Exception){
+                response = null
+            }
+            return response
+        }
 
-    private fun setupViewPager(viewPager: ViewPager){
-        val adapter = ViewPagerAdapter(supportFragmentManager)
-        adapter.addFragment(TodayWeatherFragment(), "Today")
-        viewPager.adapter = adapter
-    }
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            try {
+                /* Extracting JSON returns from the API */
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+                val wind = jsonObj.getJSONObject("wind")
+                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
 
-    private fun buildLocationRequest(){
-        locationRequest = LocationRequest()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 3000
-        locationRequest.smallestDisplacement = 10.0f
+                val updatedAt:Long = jsonObj.getLong("dt")
+                val updatedAtText = "Updated at: "+ SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(Date(updatedAt*1000))
+                val temp = main.getString("temp")+"°C"
+                val tempMin = "Min Temp: " + main.getString("temp_min")+"°C"
+                val tempMax = "Max Temp: " + main.getString("temp_max")+"°C"
+                val pressure = main.getString("pressure")
+                val humidity = main.getString("humidity")
+
+                val sunrise:Long = sys.getLong("sunrise")
+                val sunset:Long = sys.getLong("sunset")
+                val windSpeed = wind.getString("speed")
+                val weatherDescription = weather.getString("description")
+
+                val address = jsonObj.getString("name")+", "+sys.getString("country")
+
+                /* Populating extracted data into our views */
+                findViewById<TextView>(R.id.address).text = address
+                findViewById<TextView>(R.id.updated_at).text =  updatedAtText
+                findViewById<TextView>(R.id.status).text = weatherDescription.capitalize()
+                findViewById<TextView>(R.id.temp).text = temp
+                findViewById<TextView>(R.id.temp_min).text = tempMin
+                findViewById<TextView>(R.id.temp_max).text = tempMax
+                findViewById<TextView>(R.id.sunrise).text = SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(Date(sunrise*1000))
+                findViewById<TextView>(R.id.sunset).text = SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(Date(sunset*1000))
+                findViewById<TextView>(R.id.wind).text = windSpeed
+                findViewById<TextView>(R.id.pressure).text = pressure
+                findViewById<TextView>(R.id.humidity).text = humidity
+
+                /* Views populated, Hiding the loader, Showing the main design */
+                findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
+
+            } catch (e: Exception) {
+                findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                findViewById<TextView>(R.id.errorText).visibility = View.VISIBLE
+            }
+
+        }
     }
 }
