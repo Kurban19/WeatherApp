@@ -2,5 +2,8 @@
     <string name="app_name">Whether</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_update">20 April 2012, 20:08 PM</string>
+    <string name="default_city">Unknown</string>
+    <string name="default_temp">0°C</string>
+    <string name="error_message">Something went wrong</string>
 </resources>
