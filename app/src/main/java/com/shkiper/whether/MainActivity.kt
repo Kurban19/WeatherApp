@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: String?): String? {
             return try{
-                    URL("https://api.openweathermap.org/data/2.5/weather?lat=${Common.current_location.latitude}&lon=${Common.current_location.longitude}&units=metric&appid=${Common.APP_ID}").readText(
+                    URL("https://api.openweathermap.org/data/2.5/weather?lat=${Common.current_location.latitude}&lon=${Common.current_location.longitude}&units=metric&appid=${Common.APP_ID}&lang=ru").readText(
                         Charsets.UTF_8
                     )
             }catch (e: Exception){
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         @SuppressLint("SetTextI18n")
-        override fun onPostExecute(result: String) {
+        override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             try {
                 /*Extracting JSON returns from the API*/
@@ -72,8 +72,8 @@ class MainActivity : AppCompatActivity() {
                 val temp = main.getString("temp")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
                 val description = weather.getString("main")
-                val updatedAt:Long = jsonObj.getLong("dt")
-                val updatedAtText = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(Date(updatedAt*1000))
+                //val updatedAt:Long = jsonObj.getLong("dt")
+                //val updatedAtText = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(Date(updatedAt*1000))
                 val sys = jsonObj.getJSONObject("sys")
                 val address = jsonObj.getString("name")+", "+sys.getString("country")
 
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 val index: Int = temp.indexOf(".") //Removing all the useless characters in temp. Example 12.32342 -> 12
                 curr_temp.text = temp.substring(0, index) + "°C"
                 txt_city.text = address
-                txt_updated_at.text = updatedAtText
+                //txt_updated_at.text = updatedAtText
                 txt_description.text = description
 
 
