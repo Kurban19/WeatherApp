@@ -6,4 +6,5 @@
     <string name="default_city">Unknown</string>
     <string name="default_temp">0°C</string>
     <string name="error_message">Something went wrong</string>
+    <string name="default_descr">Clear Sky</string>
 </resources>
