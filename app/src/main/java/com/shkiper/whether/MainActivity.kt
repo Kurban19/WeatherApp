@@ -26,9 +26,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mFusedLocationClient: FusedLocationProviderClient
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
-    val PERMISSION_ID = 42
+    private val PERMISSION_ID = 42
     //val CITY: String = "dhaka,bd"
     //val API: String = "a6f096e9c7045fffc90db97209788939"
 
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         @SuppressLint("SetTextI18n")
-        override fun onPostExecute(result: String?) {
+        override fun onPostExecute(result: String) {
             super.onPostExecute(result)
             try {
                 /*Extracting JSON returns from the API*/
