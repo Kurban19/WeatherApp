@@ -44,18 +44,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    inner class weatherTask() : AsyncTask<String, Void, String>() {
+    inner class WeatherTask() : AsyncTask<String, Void, String>() {
         override fun onPreExecute() {
             super.onPreExecute()
             /* Showing the ProgressBar, Making the main design GONE */
             loader.visibility = View.VISIBLE
-            //mainContainer.visibility = View.GONE
             errorText.visibility = View.GONE
         }
 
         override fun doInBackground(vararg params: String?): String? {
             return try{
-                              //"https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API"
                     URL("https://api.openweathermap.org/data/2.5/weather?lat=${Common.current_location.latitude}&lon=${Common.current_location.longitude}&units=metric&appid=${Common.APP_ID}").readText(
                         Charsets.UTF_8
                     )
@@ -68,22 +66,23 @@ class MainActivity : AppCompatActivity() {
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             try {
-                /* Extracting JSON returns from the API */
+                /*Extracting JSON returns from the API*/
                 val jsonObj = JSONObject(result)
                 val main = jsonObj.getJSONObject("main")
                 val temp = main.getString("temp")
-                //val weather = jsonObj.getJSONObject("weather")
+                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+                val description = weather.getString("main")
                 val updatedAt:Long = jsonObj.getLong("dt")
                 val updatedAtText = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(Date(updatedAt*1000))
                 val sys = jsonObj.getJSONObject("sys")
                 val address = jsonObj.getString("name")+", "+sys.getString("country")
 
 
-                val index: Int = temp.indexOf(".") //Removing all the useless character in temp. Example 12.32342 -> 12
+                val index: Int = temp.indexOf(".") //Removing all the useless characters in temp. Example 12.32342 -> 12
                 curr_temp.text = temp.substring(0, index) + "°C"
                 txt_city.text = address
                 txt_updated_at.text = updatedAtText
-                //txt_description.text = description
+                txt_description.text = description
 
 
                 loader.visibility = View.GONE
@@ -112,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         Common.current_location.latitude = location.latitude
                         Common.current_location.longitude = location.longitude
-                        weatherTask().execute()
+                        WeatherTask().execute()
                     }
                 }
             } else {
@@ -171,12 +170,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == PERMISSION_ID) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // Granted. Start getting the location information
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+//        if(requestCode == PERMISSION_ID) {
+//           // if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                // Granted. Start getting the location information
 //
-            }
-        }
-    }
+//            //}
+//        }
+//    }
 }
