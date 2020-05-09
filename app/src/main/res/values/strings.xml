@@ -7,4 +7,7 @@
     <string name="default_temp">0°C</string>
     <string name="error_message">Something went wrong</string>
     <string name="default_description">Clear Sky</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

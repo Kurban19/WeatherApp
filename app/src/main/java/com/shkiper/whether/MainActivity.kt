@@ -27,17 +27,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     private val PERMISSION_ID = 42
-    //val CITY: String = "dhaka,bd"
+    val CITY: String = "dhaka,bd"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        //mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        updateForecast()
+       // getLastLocation()
 
-        getLastLocation()
-        
     }
+
+    private fun updateForecast(){
+
+    }
+
 
     inner class WeatherTask() : AsyncTask<String, Void, String>() {
         override fun onPreExecute() {
@@ -49,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: String?): String? {
             return try{
-                    URL("https://api.openweathermap.org/data/2.5/weather?lat=${Common.current_location.latitude}&lon=${Common.current_location.longitude}&units=metric&appid=${Common.APP_ID}&lang=ru").readText(
+                    URL("https://api.openweathermap.org/data/2.5/weather?id=${CITY}&appid=${Common.APP_ID}&lang=ru").readText(
                         Charsets.UTF_8
                     )
             }catch (e: Exception){
@@ -106,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         Common.current_location.latitude = location.latitude
                         Common.current_location.longitude = location.longitude
-                        WeatherTask().execute()
+                        //WeatherTask().execute()
                     }
                 }
             } else {
