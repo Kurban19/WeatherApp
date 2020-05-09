@@ -20,8 +20,6 @@ import com.shkiper.whether.common.Common
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 import java.net.URL
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     private val PERMISSION_ID = 42
     //val CITY: String = "dhaka,bd"
-    //val API: String = "a6f096e9c7045fffc90db97209788939"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +36,7 @@ class MainActivity : AppCompatActivity() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         getLastLocation()
-
-        //weatherTask().execute()
-
+        
     }
 
     inner class WeatherTask() : AsyncTask<String, Void, String>() {
