@@ -1,5 +1,6 @@
-package com.shkiper.whether;
+package com.shkiper.whether.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,12 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.shkiper.whether.R;
+import com.shkiper.whether.models.Weather;
+import com.shkiper.whether.network.WeatherFetch;
+
+import java.util.List;
+
 
 public class WeatherFragment extends Fragment {
 
     private static final String ARG_PARAM = "param";
-    private final String CITY = "dhaka,bd";
-
 
     private String mParam;
 
@@ -23,9 +28,6 @@ public class WeatherFragment extends Fragment {
 
     public static WeatherFragment newInstance() {
         WeatherFragment fragment = new WeatherFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM, param1);
-//        fragment.setArguments(args);
         return fragment;
     }
 
@@ -42,6 +44,12 @@ public class WeatherFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_weather, container, false);
     }
 
+    private class FetchWeatherTask extends AsyncTask<Void,Void, List<Weather>>{
 
+        @Override
+        protected List<Weather> doInBackground(Void... voids) {
+            return new WeatherFetch().fetchWeather();
+        }
+    }
 
 }

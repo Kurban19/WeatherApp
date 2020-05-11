@@ -1,6 +1,7 @@
 package com.shkiper.whether
 
 import androidx.fragment.app.Fragment
+import com.shkiper.whether.fragments.WeatherFragment
 
 class MainActivity : SingleFragmentActivity() {
     override fun createFragment(): Fragment {
