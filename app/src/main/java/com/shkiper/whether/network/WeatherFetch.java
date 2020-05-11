@@ -5,7 +5,6 @@ import android.net.Uri;
 import com.shkiper.whether.common.Common;
 import com.shkiper.whether.models.Weather;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,15 +19,15 @@ import java.util.List;
 public class WeatherFetch {
 
     public List<Weather> fetchWeather() {
-        return new ArrayList<>();
+        String url = buildUrl();
+        return downloadWeatherItem(url);
     }
 
-
     private static final Uri ENDPOINT = Uri
-            .parse("https://api.openweathermap.org/data/2.5/weather")
+            .parse("https://api.openweathermap.org/data/2.5/weather?")
             .buildUpon()
-            .appendQueryParameter("id", Common.CITY)
-            .appendQueryParameter("api_key", Common.APP_ID)
+            .appendQueryParameter("zip", "368009, ru")
+            .appendQueryParameter("appid", Common.APP_ID)
             .appendQueryParameter("lang", "ru")
             .build();
 
@@ -66,6 +65,8 @@ public class WeatherFetch {
 
     private List<Weather> downloadWeatherItem(String url) {
         List<Weather> items = new ArrayList<>();
+        url = url.replace("%2C%20", ",");
+        System.out.println(url);
         try {
             String jsonString = getUrlString(url);
             JSONObject jsonBody = new JSONObject(jsonString);
@@ -86,11 +87,10 @@ public class WeatherFetch {
         String description = weather.getString("main");
         String city = jsonBody.getString("name");
 
-
         Weather item = new Weather();
         item.setId(id);
         item.setCity(city);
-        item.getCurrentTemp(temp);
+        item.setCurrentTemp(temp);
         item.setDescription(description);
         items.add(item);
     }

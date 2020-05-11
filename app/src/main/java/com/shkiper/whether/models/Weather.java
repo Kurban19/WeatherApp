@@ -22,7 +22,7 @@ public class Weather {
         this.city = city;
     }
 
-    public String getCurrentTemp(String temp) {
+    public String getCurrentTemp() {
         return currentTemp;
     }
 
