@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.shkiper.whether.common.Common;
 import com.shkiper.whether.models.Weather;
+import com.shkiper.whether.repositories.WeatherRepository;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,10 +72,8 @@ public class WeatherFetch {
             String jsonString = getUrlString(url);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItem(items, jsonBody);
-        } catch (IOException ioe) {
+        } catch (IOException | JSONException ioe) {
             ioe.printStackTrace();
-        } catch (JSONException je){
-            je.printStackTrace();
         }
         return items;
     }

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.shkiper.whether.R;
 import com.shkiper.whether.models.Weather;
 import com.shkiper.whether.network.WeatherFetch;
+import com.shkiper.whether.repositories.WeatherRepository;
 
 import org.w3c.dom.Text;
 
@@ -30,8 +31,6 @@ public class WeatherFragment extends Fragment {
     private TextView city;
     private TextView description;
 
-
-
     private Weather weather;
 
 
@@ -43,12 +42,15 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        updateItems();
+
+        weather = WeatherRepository.getInstance(getActivity()).get(0);
+
+        //updateItems();
     }
 
-    private void updateItems(){
-        new FetchWeatherTask().execute();
-    }
+//    private void updateItems(){
+//        new FetchWeatherTask().execute();
+//    }
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -56,33 +58,31 @@ public class WeatherFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_weather, container, false);
 
         temperatura = (TextView) v.findViewById(R.id.curr_temp);
-        //temperatura.setText(weather.getCurrentTemp() + "°C");
+        temperatura.setText(weather.getCurrentTemp() + "°C");
         city = (TextView) v.findViewById(R.id.txt_city);
-        //city.setText(weather.getCity());
+        city.setText(weather.getCity());
         description = (TextView) v.findViewById(R.id.txt_description);
-        //description.setText(weather.getDescription());
+        description.setText(weather.getDescription());
 
         return inflater.inflate(R.layout.fragment_weather, container, false);
     }
 
-    private class FetchWeatherTask extends AsyncTask<Void,Void, List<Weather>>{
-
-        @Override
-        protected List<Weather> doInBackground(Void... voids) {
-            return new WeatherFetch().fetchWeather();
-        }
-
-        @Override
-        protected void onPostExecute(List<Weather> weathers) {
-            super.onPostExecute(weathers);
-            Items = weathers;
-            weather = Items.get(0);
-            Toast.makeText(getActivity(), weather.getCurrentTemp(), Toast.LENGTH_LONG).show();
-            Toast.makeText(getActivity(), weather.getCity(), Toast.LENGTH_LONG).show();
-
-
-
-        }
-    }
+//    public class FetchWeatherTask extends AsyncTask<Void,Void, List<Weather>>{
+//
+//        @Override
+//        protected List<Weather> doInBackground(Void... voids) {
+//            return new WeatherFetch().fetchWeather();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<Weather> weathers) {
+//            super.onPostExecute(weathers);
+//            Items = weathers;
+//            weather = Items.get(0);
+//            Toast.makeText(getActivity(), weather.getCurrentTemp(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), weather.getCity(), Toast.LENGTH_LONG).show();
+//
+//        }
+//    }
 
 }

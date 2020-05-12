@@ -1,67 +1,50 @@
 package com.shkiper.whether
 
-import androidx.fragment.app.Fragment
+import android.os.AsyncTask
+import android.os.Bundle
+import android.os.PersistableBundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.shkiper.whether.fragments.WeatherFragment
+import com.shkiper.whether.models.Weather
+import com.shkiper.whether.network.WeatherFetch
+import com.shkiper.whether.repositories.WeatherRepository
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : SingleFragmentActivity() {
-    override fun createFragment(): Fragment {
-        return WeatherFragment.newInstance()
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        setContentView(R.layout.activity_main)
+
+        //FetchWeatherTask().execute()
+
     }
 
+    inner class FetchWeatherTask : AsyncTask<Void?, Void?, List<Weather>>() {
 
-//    inner class WeatherTask() : AsyncTask<String, Void, String>() {
-//        override fun onPreExecute() {
-//            super.onPreExecute()
-//            /* Showing the ProgressBar, Making the main design GONE */
-//            loader.visibility = View.VISIBLE
-//            errorText.visibility = View.GONE
-//        }
-//
-//        override fun doInBackground(vararg params: String?): String? {
-//            return try{
-//                URL("https://api.openweathermap.org/data/2.5/weather?id=${CITY}&appid=${Common.APP_ID}&lang=ru").readText(
-//                    Charsets.UTF_8
-//                )
-//            }catch (e: Exception){
-//                null
-//            }
-//        }
-//
-//        @SuppressLint("SetTextI18n")
-//        override fun onPostExecute(result: String?) {
-//            super.onPostExecute(result)
-//            try {
-//                /*Extracting JSON returns from the API*/
-//                val jsonObj = JSONObject(result)
-//                val main = jsonObj.getJSONObject("main")
-//                val temp = main.getString("temp")
-//                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-//                val description = weather.getString("main")
-//                //val updatedAt:Long = jsonObj.getLong("dt")
-//                //val updatedAtText = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(Date(updatedAt*1000))
-//                val sys = jsonObj.getJSONObject("sys")
-//                val address = jsonObj.getString("name")+", "+sys.getString("country")
-//
-//
-//                val index: Int = temp.indexOf(".") //Removing all the useless characters in temp. Example 12.32342 -> 12
-//                curr_temp.text = temp.substring(0, index) + "°C"
-//                txt_city.text = address
-//                //txt_updated_at.text = updatedAtText
-//                txt_description.text = description
-//
-//
-//                loader.visibility = View.GONE
-//
-//
-//
-//            } catch (e: Exception) {
-//                println(e.stackTrace)
-//                //txt_city.text = e.message
-//                loader.visibility = View.GONE
-//                errorText.visibility = View.VISIBLE
-//            }
-//
-//        }
-//    }
+        override fun onPreExecute() {
+            super.onPreExecute()
+            loader.visibility = View.VISIBLE
+        }
 
+        override fun doInBackground(vararg params: Void?): List<Weather> {
+            return WeatherFetch().fetchWeather()
+        }
+
+        override fun onPostExecute(result: List<Weather>?) {
+            super.onPostExecute(result)
+            WeatherRepository.getInstance(this@MainActivity).setList(result)
+            loader.visibility = View.GONE
+
+            val fm = supportFragmentManager
+            var fragment =
+                fm.findFragmentById(R.id.action_container)
+
+            if (fragment == null) {
+                fragment = WeatherFragment.newInstance()
+                fm.beginTransaction().add(R.id.action_container, fragment!!).commit()
+            }
+        }
+    }
 }
