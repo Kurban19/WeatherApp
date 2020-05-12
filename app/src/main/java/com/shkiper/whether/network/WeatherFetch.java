@@ -23,11 +23,12 @@ public class WeatherFetch {
         String url = buildUrl();
         return downloadWeatherItem(url);
     }
-
+//    units=metric
     private static final Uri ENDPOINT = Uri
             .parse("https://api.openweathermap.org/data/2.5/weather?")
             .buildUpon()
             .appendQueryParameter("zip", "368009, ru")
+            .appendQueryParameter("units", "metric")
             .appendQueryParameter("appid", Common.APP_ID)
             .appendQueryParameter("lang", "ru")
             .build();

@@ -16,13 +16,13 @@ public class WeatherRepository {
     List<Weather> list;
 
 
-    private WeatherRepository(Context context){
+    private WeatherRepository(){
         list = new ArrayList<>();
     }
 
-    public static WeatherRepository getInstance(Context context){
+    public static WeatherRepository getInstance(){
         if(instances == null){
-            instances = new WeatherRepository(context);
+            instances = new WeatherRepository();
         }
         return instances;
     }
