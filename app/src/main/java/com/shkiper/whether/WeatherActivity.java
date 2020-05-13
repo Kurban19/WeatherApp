@@ -6,24 +6,33 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.shkiper.whether.fragments.WeatherFragment;
 import com.shkiper.whether.models.Weather;
 import com.shkiper.whether.network.WeatherFetch;
 import com.shkiper.whether.repositories.WeatherRepository;
 
+
 import java.util.List;
 
 public class WeatherActivity extends AppCompatActivity {
+
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
+        progressBar = (ProgressBar) findViewById(R.id.loader);
+
 
         new FetchWeatherTask().execute();
-
     }
 
 
@@ -38,6 +47,8 @@ public class WeatherActivity extends AppCompatActivity {
         protected void onPostExecute(List<Weather> weathers) {
             super.onPostExecute(weathers);
             WeatherRepository.getInstance().setList(weathers);
+
+            progressBar.setVisibility(View.GONE);
 
 
             FragmentManager fm = getSupportFragmentManager();

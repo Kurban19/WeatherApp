@@ -6,4 +6,6 @@
     <color name="textColorPrimary">#ffffff</color>
     <color name="windowBackground">#ffffff</color>
     <color name="navigationBarColor">#ffffff</color>
+    <color name="background_gray">#262626</color>
+    <color name="search_text_color">#b5b5b5</color>
 </resources>
