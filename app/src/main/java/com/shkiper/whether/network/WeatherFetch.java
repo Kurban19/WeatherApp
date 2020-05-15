@@ -4,11 +4,8 @@ import android.net.Uri;
 
 import com.shkiper.whether.common.Common;
 import com.shkiper.whether.models.Weather;
-import com.shkiper.whether.repositories.WeatherRepository;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

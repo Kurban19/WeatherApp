@@ -3,15 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_gray"
+    android:background="@android:color/white"
     tools:context=".fragments.SearchFragment">
 
     <AutoCompleteTextView
         android:layout_width="match_parent"
+        android:hint="Search Location"
+        android:textIsSelectable="true"
         android:layout_height="wrap_content"
         tools:text="Moscow"
         android:layout_margin="@dimen/dimen_spacing_normal"
         android:textColor="@color/search_text_color"
-        android:textSize="24sp"/>
+        android:textSize="24sp"
+        android:id="@+id/autocomplete"/>
 
 </FrameLayout>

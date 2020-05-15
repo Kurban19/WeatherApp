@@ -9,9 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 
-
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.shkiper.whether.fragments.WeatherFragment;
 import com.shkiper.whether.models.Weather;
 import com.shkiper.whether.network.WeatherFetch;

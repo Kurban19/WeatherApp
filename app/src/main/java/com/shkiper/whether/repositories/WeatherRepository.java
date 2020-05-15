@@ -1,11 +1,7 @@
 package com.shkiper.whether.repositories;
 
-import android.content.Context;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.shkiper.whether.models.Weather;
-
 import java.util.ArrayList;
 import java.util.List;
 
